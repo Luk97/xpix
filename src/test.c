@@ -11,7 +11,7 @@
 
 int main() {
     int speed = 100;
-    int radius = 50;
+    unsigned int radius = 50;
 
     xpix_init(FPS, "Test", 800, 600, pink);
 
@@ -30,10 +30,10 @@ int main() {
         xpix_startFrame();
 
         if (xpix_isKeyPressed(XPIX_KEY_E)) {
-            speed -= 3;
+            speed -= 10;
         }
         if (xpix_isKeyPressed(XPIX_KEY_R)) {
-            speed += 3;
+            speed += 10;
         }
 
         dx = xpix_getMouseX() < circle.x+radius ? -1 : 1;

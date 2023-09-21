@@ -9,6 +9,7 @@ TODO:
 - Shapes: Point, Line, Polygon
 - Collisions
 - Icon
+- Colors
 */
 
 #include "xpix_input.h"
