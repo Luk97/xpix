@@ -3,6 +3,9 @@
 #include <unistd.h>
 #include <stdio.h>
 
+#define PROFILER_IMPLEMENTATION
+#include "../thirdparty/profiler.h"
+
 #define pink 0xFFFFAAAA
 #define blue 0xFFAAAAFF
 #define black 0xFF000000
@@ -24,9 +27,14 @@ int main() {
     int dx = 1;
     int dy = 1;
 
+    init_profilers(8);
+
     while(!xpix_shouldQuit()) {
        
         // clear window and process events
+
+
+        begin_profile("frame");
         xpix_startFrame();
 
         if (xpix_isKeyPressed(XPIX_KEY_E)) {
@@ -43,15 +51,16 @@ int main() {
         circle.y += dy * speed * xpix_getDeltaTime();
         
 
-        printf("FPS: %d\n", xpix_getRealFps());
-        printf("delta: %f\n", xpix_getDeltaTime());
+
         
         xpix_drawCircleCirc(&circle, black);
       
         // apply window changes
+        end_profile();
         xpix_endFrame();
     }
     
+    clear_profilers();
     xpix_shutdown();
     return 0;
 }

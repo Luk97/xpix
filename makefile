@@ -9,7 +9,7 @@ OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 EXE = $(BIN_DIR)/$(PROG)
 
 CC = cc
-LDLIBS = -lX11
+LDLIBS = -lX11 
 CFLAGS = -O3 -Wall -Wextra -I/usr/include/X11
 
 .PHONY: all run clean
@@ -17,7 +17,7 @@ CFLAGS = -O3 -Wall -Wextra -I/usr/include/X11
 all: $(EXE)
 
 $(EXE): $(OBJ) | $(BIN_DIR)
-	$(CC) $(LDFLAGS) $^ $(LDLIBS) -o $@
+	$(CC) $^ $(LDLIBS) -o $@
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
