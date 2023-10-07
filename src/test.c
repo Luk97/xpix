@@ -11,56 +11,51 @@
 #define black 0xFF000000
 #define FPS 60
 
+void callback() {
+    printf("HELLO FROM CALLBACK\n");
+}
+
 
 int main() {
-    int speed = 100;
-    unsigned int radius = 50;
+    int speed = 2;
 
     xpix_init(FPS, "Test", 800, 600, pink);
 
-    XPix_Circle circle = {
-        .x = 400,
-        .y = 300,
-        .radius = radius,
-    };
+    int x = 400;
+    int y = 300;
 
     int dx = 1;
     int dy = 1;
 
-    init_profilers(8);
+    profiler_init(0);
+
+    XPix_ID sub = xpix_createSubwindow(0, 300, 300, 200, 200, 0xFFFF0000, 5, 0);
+    XPix_ID btn = xpix_createDefaultButton(callback, sub, 0, 0, 100, 50);
 
     while(!xpix_shouldQuit()) {
        
         // clear window and process events
+        profiler_begin("frame", PROFILER_MS * 17);
+        xpix_beginFrame();
 
+        dx = xpix_getMouseX() < x+50 ? -1 : 1;
+        dy = xpix_getMouseY() < y+50 ? -1 : 1;
 
-        begin_profile("frame");
-        xpix_startFrame();
+        x += dx * speed;
+        y += dy * speed;
 
         if (xpix_isKeyPressed(XPIX_KEY_E)) {
-            speed -= 10;
-        }
-        if (xpix_isKeyPressed(XPIX_KEY_R)) {
-            speed += 10;
+            xpix_setBackground(sub, 0xFF0000FF);
         }
 
-        dx = xpix_getMouseX() < circle.x+radius ? -1 : 1;
-        dy = xpix_getMouseY() < circle.y+radius ? -1 : 1;
-        
-        circle.x += dx * speed * xpix_getDeltaTime();
-        circle.y += dy * speed * xpix_getDeltaTime();
-        
-
-
-        
-        xpix_drawCircleCirc(&circle, black);
+        xpix_drawRectangle(x, y, 100, 100, blue);
       
         // apply window changes
-        end_profile();
+        profiler_end();
         xpix_endFrame();
     }
     
-    clear_profilers();
+    profiler_destroy();
     xpix_shutdown();
     return 0;
 }

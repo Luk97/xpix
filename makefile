@@ -10,7 +10,7 @@ EXE = $(BIN_DIR)/$(PROG)
 
 CC = cc
 LDLIBS = -lX11 
-CFLAGS = -O3 -Wall -Wextra -I/usr/include/X11
+CFLAGS = -O0 -Wall -Wextra -Wimplicit-fallthrough=0 -I/usr/include/X11
 
 .PHONY: all run clean
 

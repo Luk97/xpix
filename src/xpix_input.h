@@ -51,9 +51,9 @@ typedef enum {
 } XPix_Key;
 
 typedef enum {
-    XPIX_BUTTON_NULL      = 0,       // used for no mouse button
-    XPIX_BUTTON_1         = 1,       // left mouse button
-    XPIX_BUTTON_2         = 2,       // right mouse button
-} XPix_Button;
+    XPIX_MOUSE_NULL       = 0,       // used for no mouse button
+    XPIX_MOUSE_LEFT       = 1,       // left mouse button
+    XPIX_MOUSE_RIGHT      = 2,       // right mouse button
+} XPix_MouseButton;
 
 #endif // XPIX_INPUT_H_
