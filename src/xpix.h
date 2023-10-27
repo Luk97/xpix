@@ -52,8 +52,11 @@ extern void xpix_endFrame();
 extern void xpix_setTargetFps(int fps);
 extern int xpix_getTargetFps();
 extern int xpix_getFps();
-extern double xpix_getDeltaTime();
+extern float xpix_getFrameTime();
+extern int xpix_getScreenWidth();
+extern int xpix_getScreenHeight();
 
+extern void xpix_test();
 
 // mouse
 extern bool xpix_isMouseButtonPressed(XPix_MouseButton button);
@@ -64,6 +67,7 @@ extern bool xpix_isMouseButtonDragged(XPix_MouseButton button);
 extern int xpix_getMouseX();
 extern int xpix_getMouseY();
 extern XPix_Point xpix_getMousePosition();
+extern XPix_Point xpix_getMouseMovement();
 
 // WINDOW
 extern void xpix_setBackground(XPix_ID window, argb32 background);
@@ -121,15 +125,6 @@ XPIX_API bool xpix_isKeyDown(XPix_Key key);
  * @return true if the provided key is currently not pressed, false otherwise.
 */
 XPIX_API bool xpix_isKeyUp(XPix_Key key);
-
-/**
- * @brief Tells if a given key is being pressed in the current frame and in the last frame aswell.
- * 
- * @param key value can be found in "xpix_input.h".
- * 
- * @return true if the provided key got pressed this and last frame, false otherwise.
-*/
-XPIX_API bool xpix_isKeyHoldDown(XPix_Key key);
 
 /**
  * @return the current quit key, that triggers to close the window.

@@ -46,13 +46,21 @@ bool xpix_isMouseButtonDragged(XPix_MouseButton button) {
 }
 
 int xpix_getMouseX() {
-    return CORE.Mouse.position.x;
+    return CORE.Mouse.currentposition.x;
 }
 
 int xpix_getMouseY() {
-    return CORE.Mouse.position.y;
+    return CORE.Mouse.currentposition.y;
 }
 
 XPix_Point xpix_getMousePosition() {
-    return CORE.Mouse.position;
+    return CORE.Mouse.currentposition;
+}
+
+XPix_Point xpix_getMouseMovement() {
+    XPix_Point movement = {
+        .x = CORE.Mouse.currentposition.x - CORE.Mouse.previousPosition.x,
+        .y = CORE.Mouse.currentposition.y - CORE.Mouse.previousPosition.y
+    };
+    return movement;
 }

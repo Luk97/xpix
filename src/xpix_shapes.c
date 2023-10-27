@@ -19,7 +19,7 @@ void xpix_drawRectangleRec(XPix_Rect *rect, argb32 color) {
 
 void xpix_drawCircle(double x, double y, unsigned int radius, argb32 color) {
     XSetForeground(CORE.display, CORE.mainWindow.gc, color);
-    XFillArc(CORE.display, CORE.mainWindow.handle, CORE.mainWindow.gc, (int) x, (int) y, radius*2, radius*2, 0, 360*64);
+    XFillArc(CORE.display, CORE.mainWindow.buffer, CORE.mainWindow.gc, (int) x, (int) y, radius*2, radius*2, 0, 360*64);
 }
 
 void xpix_drawCircleCirc(XPix_Circle * circle, argb32 color) {

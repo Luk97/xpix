@@ -15,6 +15,6 @@ int xpix_getFps() {
     return CORE.Time.realFps;
 }
 
-double xpix_getDeltaTime() {
-    return CORE.Time.deltaTime;
+float xpix_getFrameTime() {
+    return CORE.Time.frameTime;
 }

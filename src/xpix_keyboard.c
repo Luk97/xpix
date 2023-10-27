@@ -36,16 +36,6 @@ bool xpix_isKeyUp(XPix_Key key) {
     return false;
 }
 
-
-bool xpix_isKeyHoldDown(XPix_Key key) {
-    if (key > 0 && key < MAX_KEYS) {
-        if (CORE.Keyboard.previousKeyState[key] == 1 && CORE.Keyboard.currentKeyState[key] == 1) {
-            return true;
-        }
-    }
-    return false;
-}
-
 void xpix_setQuitKey(XPix_Key key) {
     // key == 0 if no key should trigger quitting the application
     if (key >= 0 && key < MAX_KEYS) {

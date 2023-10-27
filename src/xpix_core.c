@@ -1,16 +1,15 @@
 #include "xpix_internal.h"
 
-#include <wchar.h>
 
 
-// Global Variable used literally everywhere
-Core CORE = {0};
 
+void xpix_test() {
+    XResizeWindow(CORE.display, CORE.mainWindow.handle, CORE.mainWindow.width, CORE.mainWindow.height+300);
+}
 
 
 void xpix_beginFrame() {
-
-    CORE.Time.frameTimeBufferUSec = clock();
+    gettimeofday(&CORE.Time.buffer, NULL);
 
 
     // update Keyboard State
@@ -18,6 +17,8 @@ void xpix_beginFrame() {
         CORE.Keyboard.previousKeyState[i] = CORE.Keyboard.currentKeyState[i];
     }
 
+
+    CORE.Mouse.previousPosition = CORE.Mouse.currentposition;
     // update Mousebutton State
     for (size_t i = 0; i < (size_t) MAX_MOUSE_BUTTONS; ++i) {
         CORE.Mouse.previousButtonState[i] = CORE.Mouse.currentButtonState[i];
@@ -121,30 +122,27 @@ void xpix_beginFrame() {
             case MotionNotify: {
                 
                 // update mouse positions on screen
-                CORE.Mouse.position.x = event.xmotion.x;
-                CORE.Mouse.position.y = event.xmotion.y;
+                CORE.Mouse.currentposition.x = event.xmotion.x;
+                CORE.Mouse.currentposition.y = event.xmotion.y;
             } break;
 
             case ConfigureNotify: {
 
                 // window resized
-                if (event.xconfigure.width != (int) CORE.mainWindow.width ||
-                    event.xconfigure.height != (int) CORE.mainWindow.height) {
-
-                    // resize buffer
-                    XFreePixmap(CORE.display, CORE.mainWindow.buffer);
-                    CORE.mainWindow.buffer = XCreatePixmap(
-                        CORE.display,
-                        CORE.mainWindow.handle,
-                        event.xconfigure.width,
-                        event.xconfigure.height,
-                        DefaultDepth(CORE.display, DefaultScreen(CORE.display))
-                    );
+                if (event.xconfigure.width != (int) CORE.mainWindow.width || event.xconfigure.height != (int) CORE.mainWindow.height) {
 
                     // update width and height of the window
                     CORE.mainWindow.width = event.xconfigure.width;
                     CORE.mainWindow.height = event.xconfigure.height;
                 }
+            } break;
+
+            case EnterNotify: {
+                CORE.Mouse.pointerGrabbed = true;
+            } break;
+
+            case LeaveNotify: {
+                CORE.Mouse.pointerGrabbed = false;
             } break;
 
             default: break;
@@ -242,21 +240,44 @@ void xpix_endFrame() {
     }
 
     // Time handling
-    time_t realFrameTimeUSec = clock() - CORE.Time.frameTimeBufferUSec;
-    int waitingTimeUSec = CORE.Time.targetFrameTimeUSec - realFrameTimeUSec;
+    struct timeval frame;
+    gettimeofday(&frame, NULL);
 
-    // target framerate achieved
-    if (waitingTimeUSec > 0) {
-        CORE.Time.realFps = CORE.Time.targetFps;
-        CORE.Time.deltaTime = CORE.Time.targetDeltaTime;
-        usleep(waitingTimeUSec);
+    frame.tv_usec -= CORE.Time.buffer.tv_usec;
+    frame.tv_sec  -= CORE.Time.buffer.tv_sec;
+    if (frame.tv_usec < 0) {
+        frame.tv_sec -= 1;
+        frame.tv_usec += 1000000;
     }
-    // frame overshoots target framerate
-    else {
-        CORE.Time.realFps = 1000000 / realFrameTimeUSec;
-        CORE.Time.deltaTime = (double) 1 / CORE.Time.realFps;
-    }
+
+    int frameDurationUSec = frame.tv_usec + frame.tv_sec * 1000000;
+    int sleepTimeUSec = 1000000 / CORE.Time.targetFps - frameDurationUSec;
+
+    CORE.Time.realFps = sleepTimeUSec > 0 ? CORE.Time.targetFps : 1000000 / frameDurationUSec;
+    CORE.Time.frameTime = (float) 1 / CORE.Time.realFps;
+    if (sleepTimeUSec > 0) usleep(sleepTimeUSec);
 }
 
+extern bool internal_initXConnection();
+
+int xpix_getScreenWidth() {
+    if (!CORE.display) {
+        if (!internal_initXConnection()) {
+            return 0;
+        }
+    }
+
+    return DisplayWidth(CORE.display, DefaultScreen(CORE.display));
+}
+
+int xpix_getScreenHeight() {
+    if (!CORE.display) {
+        if (!internal_initXConnection()) {
+            return 0;
+        }
+    }
+    
+    return DisplayHeight(CORE.display, DefaultScreen(CORE.display));
+}
 
 
